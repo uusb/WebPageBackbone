@@ -10,11 +10,14 @@ namespace WebPageBackbone
     {
         public static void RegisterBundles(BundleCollection bundles)
         {
-            bundles.Add(new ScriptBundle("~/bundles/core").Include(
+            bundles.Add(new ScriptBundle("~/bundles/scripts/core").Include(
                 "~/Scripts/Core/jquery-1.9.1.js",
+                "~/Scripts/Core/globalSettings.js",
                 "~/Scripts/Core/json2.js",
                 "~/Scripts/Core/underscore.js",
                 "~/Scripts/Core/backbone.js"));
+
+            bundles.Add(new StyleBundle("~/bundles/styles/core").Include("~/Styles/Core.css"));
         }
     }
 }

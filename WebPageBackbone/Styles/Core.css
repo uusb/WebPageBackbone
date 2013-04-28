@@ -1,0 +1,33 @@
+﻿header {
+    width: 100%;
+    height: 50px;
+    background: red;
+}
+
+.body .content {
+    float: left;
+}
+
+.body .menu {
+    background: yellow;
+    float: left;
+    height: 500px;
+    width: 10%;
+}
+
+.tabs {
+    position: relative;
+    padding-left: 10px;
+}
+
+.tab {
+    display: inline-block;
+}
+
+.tab>span {
+    cursor: pointer;
+}
+
+.tab>span.selected {
+    background: yellow;
+}

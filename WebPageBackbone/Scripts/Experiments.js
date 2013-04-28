@@ -1,6 +1,147 @@
 ﻿$(function () {
-    playWithView();
+    var menuList = $('.menu-list');
+    var MenuItem = Backbone.Model.extend({
+        defaults: {
+            id: 0,
+            title: 'Not defined',
+            tabName: 'Not defined'
+        }
+    });
+    
+    var Tab = Backbone.Model.extend({
+        defaults: {
+            id: 0,
+            name: ''
+        }
+    });
+
+    var TabCollection = Backbone.Collection.extend({
+       model: Tab 
+    });
+
+    var TabView = Backbone.View.extend({
+        tagName: 'li',
+        events: {
+          'click span': 'select'  
+        },
+        initialize: function () {
+            _.bindAll(this, 'render', 'select');
+        },
+        render: function () {
+            var span = $('<span>' + this.model.get('name') + '</span>'),
+                div = $('<div class="tab-content">' + this.model.get('id') + '</div>');
+            $(this.el).addClass('tab').append(span).append(div);
+            return this;
+        },
+        select: function (e) {
+            var el = $(this.el);
+            
+            //deselect and hide all
+            $('.tab>span').removeClass('selected');
+            $('.tab-content').hide();
+            
+            el.find('span').addClass('selected');
+            $(el).find('.tab-content').show();
+        }
+    });
+
+    var TabCollectionView = Backbone.View.extend({
+        el: $('.tabs'),
+        initialize: function () {
+            _.bindAll(this, 'render', 'appendItem');
+
+            this.collection = new TabCollection();
+            this.collection.bind('add', this.appendItem);
+        },
+        render: function () {
+            var self = this;
+            _(this.collection.models).each(function(item) {
+                self.appendItem(item);
+            }, this);
+            return this;
+        },
+        addItem: function (item) {
+            this.collection.add(item);
+        },
+        appendItem: function (item) {
+            var tabViewItem = new TabView({
+                model: item
+            });
+            $(this.el).append(tabViewItem.render().el);
+            tabViewItem.select();
+        }
+    });
+    var tabCollectionView = new TabCollectionView();
+
+    var MenuItemView = Backbone.View.extend({
+        events: {
+            'click span': 'addTab'
+        },
+        initialize: function () {
+            _.bindAll(this, 'addTab');
+        },
+        addTab: function (e) {
+            console.log(this.model.get('id'));
+            var newTab = new Tab({ id: this.model.get('id'), name: this.model.get('tabName') });
+            tabCollectionView.addItem(newTab);
+        }
+    });
+
+    menuList.find('li.menu-item').each(function (idx, el) {
+        var listItem = $(this),
+            id = listItem.data('id'),
+            title = listItem.find('span').text(),
+            tabName = listItem.data('tab'),
+            menuItem = new MenuItem({ id: id, title: title, tabName: tabName }),
+            menuItemView = new MenuItemView({ model: menuItem, el: el });
+    });
 });
+
+var playWithCollection = function () {
+    var Song = Backbone.Model.extend({
+        defaults: {
+            name: 'Not specified',
+            artist: 'Not specified'
+        },
+        initialize: function() {
+            console.log('Music is the answer!');
+        }
+    });
+
+    var Album = Backbone.Collection.extend({
+       model: Song 
+    });
+
+    var song1 = new Song({ name: 'fgsdfgsd', artist: 'asdfsdadfsdf' }),
+        song2 = new Song({ name: 'dfgsdgsdf', artist: 'asdfsadfsfsgff' }),
+        song3 = new Song({ name: 'dfgsdfgdf', artist: 'ghfdlgfldddfg' });
+
+    var myAlbum = new Album([song1, song2, song3]);
+    console.log(myAlbum.models);
+};
+
+var playWithRoute = function () {
+    var AppRouter = Backbone.Router.extend({
+        routes: {
+            'post/:id': 'getPost',
+            'download/*path': 'downloadFile',
+            ':route/:action': 'loadView'
+        }
+    });
+
+    var appRouter = new AppRouter;
+    appRouter.on('route:getPost', function(id) {
+        console.log('Get post number ' + id);
+    });
+    appRouter.on('route:downloadFile', function (path) {
+        console.log('File path to download ' + path);
+    });
+    appRouter.on('route:loadView', function (route, action) {
+        console.log(route, 'and', action);
+    });
+
+    Backbone.history.start();
+};
 
 var playWithView = function () {
     var SearchView = Backbone.View.extend({
@@ -9,10 +150,16 @@ var playWithView = function () {
         },
         render: function () {
             var that = this;
-            $.get('template/search', function(template){
-                that.$el.html($(template).html());
+            $.get('template/search', function (template) {
+                that.$el.html(_.template($(template).html(), { search_label: "My search" }));
             });
             return this;
+        },
+        events: {
+            'click input[type=button]': 'doSearch'
+        },
+        doSearch: function (e) {
+            alert('Search for ' + $('#search_input').val());
         }
     });
 

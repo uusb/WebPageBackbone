@@ -3,7 +3,3 @@
 <asp:Content ContentPlaceHolderID="head" runat="server">
     <%: Scripts.Render("~/Scripts/Experiments.js") %>
 </asp:Content>
-
-<asp:Content ContentPlaceHolderID="cphBody" runat="server">
-    <div id="search-container"></div>
-</asp:Content>

@@ -1,21 +1,48 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Main.master.cs" Inherits="WebPageBackbone.Main" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" ViewStateMode="Disabled" EnableViewState="false" CodeBehind="Main.master.cs" Inherits="WebPageBackbone.Main" %>
 
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
-    <%: Scripts.Render("~/bundles/core") %>
+    <%: Scripts.Render("~/bundles/scripts/core") %>
+    <%: Styles.Render("~/bundles/styles/core") %>
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
 <body>
+    <header>
+            <asp:ContentPlaceHolder ID="cphHeader" runat="server">
+                
+            </asp:ContentPlaceHolder>
+    </header>
     <form id="form1" runat="server">
-    <div>
-        <asp:ContentPlaceHolder ID="cphBody" runat="server">
-        
-        </asp:ContentPlaceHolder>
-    </div>
+        <div class="body">
+            <div class="menu">
+                <asp:ContentPlaceHolder ID="cphMenu" runat="server">
+                    <ul class="menu-list">
+                        <li data-id="1" data-tab="first" class="menu-item">
+                            <span>First table</span>
+                        </li>
+                        <li data-id="2" data-tab="second" class="menu-item">
+                            <span>Second table</span>
+                        </li>
+                    </ul>
+                </asp:ContentPlaceHolder>
+            </div>
+            <div class="content">
+                <asp:ContentPlaceHolder ID="cphContent" runat="server">
+                    <ul class="tabs">
+                        
+                    </ul>
+                </asp:ContentPlaceHolder>
+            </div>
+        </div>
     </form>
+    <footer>
+        <asp:ContentPlaceHolder ID="cphFooter" runat="server">
+            
+        </asp:ContentPlaceHolder>
+    </footer>
 </body>
 </html>
