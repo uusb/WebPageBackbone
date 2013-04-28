@@ -21,6 +21,7 @@
 
     var TabView = Backbone.View.extend({
         tagName: 'li',
+        className: 'tab',
         events: {
           'click span': 'select'  
         },
@@ -30,16 +31,16 @@
         render: function () {
             var span = $('<span>' + this.model.get('name') + '</span>'),
                 div = $('<div class="tab-content">' + this.model.get('id') + '</div>');
-            $(this.el).addClass('tab').append(span).append(div);
+            $(this.el).append(span).append(div);
             return this;
         },
         select: function (e) {
             var el = $(this.el);
-            
+
             //deselect and hide all
             $('.tab>span').removeClass('selected');
             $('.tab-content').hide();
-            
+
             el.find('span').addClass('selected');
             $(el).find('.tab-content').show();
         }
@@ -47,11 +48,15 @@
 
     var TabCollectionView = Backbone.View.extend({
         el: $('.tabs'),
+        tagName: 'ul',
+        className: 'tabs',
         initialize: function () {
             _.bindAll(this, 'render', 'appendItem');
 
             this.collection = new TabCollection();
             this.collection.bind('add', this.appendItem);
+
+            this._tabViews = [];
         },
         render: function () {
             var self = this;
@@ -68,7 +73,18 @@
                 model: item
             });
             $(this.el).append(tabViewItem.render().el);
-            tabViewItem.select();
+            this._tabViews.push(tabViewItem);
+        },
+        openTab: function (id) {
+            var tab = _.find(this._tabViews, function (item) {
+                return item.model.get('id') == id;
+            });
+            if (tab) {
+                tab.select();
+                return true;
+            } else {
+                return false;
+            }
         }
     });
     var tabCollectionView = new TabCollectionView();
@@ -81,9 +97,11 @@
             _.bindAll(this, 'addTab');
         },
         addTab: function (e) {
-            console.log(this.model.get('id'));
-            var newTab = new Tab({ id: this.model.get('id'), name: this.model.get('tabName') });
-            tabCollectionView.addItem(newTab);
+            if (!tabCollectionView.openTab(this.model.get('id'))) {
+                var newTab = new Tab({ id: this.model.get('id'), name: this.model.get('tabName') });
+                tabCollectionView.addItem(newTab);
+                tabCollectionView.openTab(this.model.get('id'))
+            }
         }
     });
 
