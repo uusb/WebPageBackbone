@@ -23,15 +23,17 @@
         tagName: 'li',
         className: 'tab',
         events: {
-          'click span': 'select'  
+            'click span.tabName': 'select',
+            'click span.close': 'closeTab'
         },
         initialize: function () {
-            _.bindAll(this, 'render', 'select');
+            _.bindAll(this, 'render', 'select', 'closeTab');
         },
         render: function () {
-            var span = $('<span>' + this.model.get('name') + '</span>'),
+            var tabName = $('<span class="tabName">' + this.model.get('name') + '</span>'),
+                closeBtn = $('<span class="close">close<span>'),
                 div = $('<div class="tab-content">' + this.model.get('id') + '</div>');
-            $(this.el).append(span).append(div);
+            $(this.el).append(tabName).append(closeBtn).append(div);
             return this;
         },
         select: function (e) {
@@ -43,6 +45,9 @@
 
             el.find('span').addClass('selected');
             $(el).find('.tab-content').show();
+        },
+        closeTab: function () {
+            this.remove()
         }
     });
 
@@ -72,6 +77,7 @@
             var tabViewItem = new TabView({
                 model: item
             });
+
             $(this.el).append(tabViewItem.render().el);
             this._tabViews.push(tabViewItem);
         },
